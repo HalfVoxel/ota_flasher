@@ -7,7 +7,7 @@ use brevduva::{
     channel::{ChannelMessage, SerializationFormat},
     SyncStorage,
 };
-use clap::{error, Parser};
+use clap::{Parser};
 use headway::ProgressBar;
 use local_ip_address::local_ip;
 use ota_flasher::OtaUpdateFromUrl;
@@ -16,28 +16,65 @@ const MQTT_HOST: &str = "mqtt://arongranberg.com:1883";
 const MQTT_CLIENT_ID: &str = "ota_flasher";
 const MQTT_USERNAME: &str = "wakeup_alarm";
 const MQTT_PASSWORD: &str = "xafzz25nomehasff";
-
 #[tokio::main]
 pub async fn main() {
     let args = Args::parse();
-    upload(args.device, &args.image, &args.version_file).await;
+
+    match args.command {
+        Command::Upload { device, image, version_file } => {
+            upload(device, &image, &version_file).await;
+        }
+        Command::List => {
+            list_devices().await;
+        }
+    }
 }
 
 #[derive(Parser, Debug)]
 #[command(version, about, long_about = None)]
 struct Args {
-    /// Name of the device to upload to
-    #[arg(long)]
-    device: String,
-    #[arg(long)]
-    image: PathBuf,
-    #[arg(long)]
-    version_file: PathBuf,
+    #[command(subcommand)]
+    command: Command,
+}
+
+#[derive(clap::Subcommand, Debug)]
+enum Command {
+    /// Upload firmware to a device
+    Upload {
+        /// Name of the device to upload to
+        #[arg(long)]
+        device: String,
+        #[arg(long)]
+        image: PathBuf,
+        #[arg(long)]
+        version_file: PathBuf,
+    },
+    /// List all available devices
+    List,
+}
+
+
+pub async fn list_devices() {
+    env_logger::init();
+
+    let storage = SyncStorage::new(
+        MQTT_CLIENT_ID,
+        MQTT_HOST,
+        MQTT_USERNAME,
+        MQTT_PASSWORD,
+        brevduva::SessionPersistance::Transient,
+    )
+    .await;
+
+    let devices = available_devices(&storage).await;
+    println!("Available devices:");
+    for device in devices {
+        println!("\t{device}");
+    }
 }
 
 pub async fn upload(device: String, image: &Path, version_file: &Path) {
     env_logger::init();
-    // esp_idf_svc::log::set_target_level("", log::LevelFilter::Debug).unwrap();
 
     let storage = SyncStorage::new(
         MQTT_CLIENT_ID,
