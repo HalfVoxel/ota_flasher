@@ -5,7 +5,7 @@ resolver = "2"
 edition = "2021"
 
 [[bin]]
-name = "uploader"
+name = "brevduva_ota_upload"
 path = "src/uploader.rs"
 required-features = ["upload"]
 
