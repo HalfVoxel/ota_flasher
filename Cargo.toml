@@ -1,0 +1,48 @@
+[package]
+name = "ota_flasher"
+version = "0.1.0"
+resolver = "2"
+edition = "2021"
+
+[[bin]]
+name = "uploader"
+path = "src/uploader.rs"
+required-features = ["upload"]
+
+[lib]
+name = "ota_flasher"
+path = "src/lib.rs"
+
+[dependencies]
+brevduva = { git = "https://github.com/HalfVoxel/brevduva.git" }
+# brevduva = { path = "../brevduva" }
+esp-idf-svc = { version = "0.51", default-features = false, optional = true, features = [
+    "native",
+    "std",
+] }
+serde = { version = "*", features = ["derive"] }
+env_logger = "0.11"
+log = { version = "0.4" }
+tokio = { version = "1", features = ["rt", "time"] }
+local-ip-address = { version = "0.6", optional = true }
+headway = { version = "0.1", optional = true }
+clap = { version = "4.5", features = ["derive"], optional = true }
+rouille = { version = "3.6", optional = true }
+thiserror = "2.0"
+crc32fast = { version = "1.5", optional = true }
+# embassy-executor = { version = "*", features = ["arch-std"] }
+
+[build-dependencies]
+embuild = { version = "0.33.1", features = ["espidf"], optional = true }
+
+[features]
+embedded = ["esp-idf-svc", "embuild"]
+upload = [
+    "brevduva/pc",
+    "local-ip-address",
+    "headway",
+    "clap",
+    "rouille",
+    "tokio/full",
+    "crc32fast",
+]
