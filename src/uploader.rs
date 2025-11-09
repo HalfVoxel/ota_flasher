@@ -246,7 +246,7 @@ async fn available_devices(storage: &SyncStorage) -> Vec<String> {
         .into_iter()
         .filter(|x| x.message == "online")
         .map(|x| x.topic)
-        .map(|x| x.split('/').nth(2).unwrap().to_owned())
+        .map(|x| x.split('/').nth(1).unwrap().to_owned())
         .collect::<HashSet<_>>()
         .into_iter()
         .filter(|x| x != MQTT_CLIENT_ID)
