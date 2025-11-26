@@ -202,7 +202,7 @@ checksum = "812e12b5285cc515a9c72a5c1d3b6d46a19dac5acfef5265968c166106e31dd3"
 [[package]]
 name = "brevduva"
 version = "0.1.0"
-source = "git+https://github.com/HalfVoxel/brevduva.git#88c01663cd0656647f79875db7dd16a15d862f17"
+source = "git+https://github.com/HalfVoxel/brevduva.git?rev=88c0166#88c01663cd0656647f79875db7dd16a15d862f17"
 dependencies = [
  "async-trait",
  "edge-mqtt",

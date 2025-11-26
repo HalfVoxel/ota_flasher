@@ -14,7 +14,7 @@ name = "ota_flasher"
 path = "src/lib.rs"
 
 [dependencies]
-brevduva = { git = "https://github.com/HalfVoxel/brevduva.git" }
+brevduva = { git = "https://github.com/HalfVoxel/brevduva.git", rev="88c0166" }
 # brevduva = { path = "../brevduva" }
 esp-idf-svc = { version = "0.51", default-features = false, optional = true, features = [
     "native",
